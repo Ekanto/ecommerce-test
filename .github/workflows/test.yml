@@ -23,7 +23,7 @@ jobs:
       run: npm install
     
     - name: Install Allure Playwright
-      run: npm install -D allure-playwright
+      run: npm install -D allure-playwright allure-commandline
     
     - name: Install Playwright
       run: npx playwright install chromium firefox
