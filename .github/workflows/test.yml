@@ -1,163 +1,29 @@
-name: Automated Test Suite
+name: Playwright Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
-  workflow_dispatch:  # Allows manual trigger
+    branches: [ main ]
 
 jobs:
-  smoke-tests:
-    name: Smoke Tests
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-      
-      - name: Run smoke tests
-        run: npm run test:smoke
-        env:
-          BASE_URL: https://demo.vercel.store
-      
-      - name: Upload smoke test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: smoke-test-results
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 30
-
-  e2e-tests:
-    name: E2E Tests
-    needs: smoke-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    - name: Checkout code
+      uses: actions/checkout@v4
     
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, firefox, webkit]
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-      
-      - name: Run E2E tests on ${{ matrix.browser }}
-        run: npx playwright test tests/e2e --project=${{ matrix.browser }}
-        env:
-          BASE_URL: https://demo.vercel.store
-      
-      - name: Upload E2E test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: e2e-results-${{ matrix.browser }}
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 30
-
-  regression-tests:
-    name: Regression Tests
-    needs: smoke-tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    - name: Install dependencies
+      run: npm install
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-      
-      - name: Run regression tests
-        run: npm run test:regression
-        env:
-          BASE_URL: https://demo.vercel.store
-      
-      - name: Upload regression test results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: regression-test-results
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 30
-
-  test-report:
-    name: Generate Test Report
-    needs: [smoke-tests, e2e-tests, regression-tests]
-    runs-on: ubuntu-latest
-    if: always()
+    - name: Install Playwright
+      run: npx playwright install
     
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Download all test results
-        uses: actions/download-artifact@v3
-        with:
-          path: all-test-results
-      
-      - name: Generate summary report
-        run: |
-          echo "# Test Execution Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "- Smoke Tests: ✅ Completed" >> $GITHUB_STEP_SUMMARY
-          echo "- E2E Tests: ✅ Completed" >> $GITHUB_STEP_SUMMARY
-          echo "- Regression Tests: ✅ Completed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Target URL:** https://demo.vercel.store" >> $GITHUB_STEP_SUMMARY
-          echo "**Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
-      
-      - name: Comment PR with results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '## ✅ Automated Tests Completed\n\nAll test suites have finished execution. Check the Actions tab for detailed results.'
-            })
+    - name: Run Playwright tests
+      run: npx playwright test
