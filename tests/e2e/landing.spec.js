@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {LandingPage} from '../pages/landingPage';
+import {LandingPage} from '../../pages/landingPage';
 
 
 test.describe('landing page e2e tests', () => {
