@@ -19,6 +19,9 @@ class ProductPage {
       .first();
     this.variantBlack = page.locator('button[title="Color Black"]');
     this.variantSize = page.locator('button[title="Size XS"]');
+    this.productNameOnCart = page.locator('span:has-text("Acme Circles T-Shirt")');
+    this.proceedToCheckoutBtn = page.locator('button:has-text("Proceed to Checkout")');
+    this.closeToast = page.locator('button[aria-label="Close toast"]');
   }
 
   async verifyProductDetails() {
@@ -66,7 +69,26 @@ class ProductPage {
     console.log("Clicking on Add to cart button");
     await this.addToCartButtonWhenEnabled.click();
     console.log("Add to cart button clicked, product should be added to cart now");
-    
+    console.log("Verifying product is added to cart");
+    await expect(this.productNameOnCart).toBeVisible();
+    console.log(
+      "Product added to cart is",
+      await this.productNameOnCart.textContent()
+    );
+    console.log("Proceeding to checkout");
+    console.log("Closing the toast message");
+    await this.closeToast.click();
+    console.log("Toast message closed");
+    console.log("Clicking on Proceed to checkout button");
+    await expect(this.proceedToCheckoutBtn).toBeVisible();
+    await this.proceedToCheckoutBtn.click();
+    console.log("Proceeded to checkout page");
+    //await this.page.waitForLoadState("networkidle");
+    console.log("Checkout page loaded");
+    await this.page.screenshot({
+      path: 'screenshots/checkout.png',
+      fullPage: true
+    });
   }
 }
 
