@@ -49,7 +49,7 @@ class ProductPage {
     );
   }
 
-  async selectVariantAndAddToCart() {
+   async selectVariantAndAddToCart() {
     console.log("Selecting product variants");
     console.log(
       "Selecting the product first",
@@ -76,20 +76,29 @@ class ProductPage {
       await this.productNameOnCart.textContent()
     );
     console.log("Proceeding to checkout");
-    console.log("Closing the toast message");
-    await this.closeToast.click();
-    console.log("Toast message closed");
+    
+    // Conditional toast handling
+    try {
+      console.log("Checking for toast message");
+      await this.closeToast.waitFor({ timeout: 3000 });
+      console.log("Toast message found, closing it");
+      await this.closeToast.click();
+      console.log("Toast message closed");
+    } catch (error) {
+      console.log("No toast message found, proceeding directly to checkout");
+    }
+    
     console.log("Clicking on Proceed to checkout button");
     await expect(this.proceedToCheckoutBtn).toBeVisible();
     await this.proceedToCheckoutBtn.click();
     console.log("Proceeded to checkout page");
-    //await this.page.waitForLoadState("networkidle");
     console.log("Checkout page loaded");
     await this.page.screenshot({
-      path: 'screenshots/checkout.png',
+      path: 'test-results/screenshots/checkout.png',
       fullPage: true
     });
   }
+
 }
 
 export { ProductPage };
