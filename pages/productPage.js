@@ -77,7 +77,6 @@ class ProductPage {
     );
     console.log("Proceeding to checkout");
     
-    // Conditional toast handling with if-else
     const isToastVisible = await this.closeToast.isVisible({ timeout: 3000 });
     
     if (isToastVisible) {

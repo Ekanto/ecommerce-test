@@ -55,14 +55,14 @@ This document outlines the comprehensive testing strategy for the Next.js Commer
 
 ```
            /\
-          /  \    E2E Tests (20%)
+          /  \    E2E Tests (50%)
          /____\   - Critical user journeys
         /      \  - Cross-browser validation
        /________\ 
       /          \ Regression Tests (30%)
      /____________\ - Feature stability
     /              \ - UI components
-   /________________\ Smoke Tests (50%)
+   /________________\ Smoke Tests (20%)
                       - Quick validation
                       - Critical path check
 ```
@@ -76,13 +76,19 @@ This document outlines the comprehensive testing strategy for the Next.js Commer
         └── test.yml
 pages/
     ├── landingPage.js
-    └── productPage.js
+    ├── productPage.js
+    ├── regression.js
+    └── smoke.js
 screenshots/
     └── checkout.png
 tests/
-    └── e2e/
+    ├── e2e/
         ├── landing.spec.js
         └── product.spec.js
+    ├── regression/
+        └── regression.spec.js
+    └── smoke/
+        └── smoke.spec.js
 .gitignore
 package-lock.json
 package.json
@@ -134,8 +140,6 @@ TESTING_STRATEGY.md
 ### Desktop Browsers
 - **Chrome/Chromium** (Latest) - Primary
 - **Firefox** (Latest) - Secondary
-- **Safari/WebKit** (Latest) - Secondary
-
 ---
 
 ## 6. Test Execution Strategy
@@ -150,17 +154,17 @@ npm run test:e2e
 npm run test:regression
 npm run test:smoke
 
-# Interactive mode (debugging)
-npm run test:ui
+
 
 # Single browser
 npm run test:chrome
+npm run test:firefox
 ```
 
 ### CI/CD Pipeline
 
 **Trigger Events:**
-- Push to `main` or `develop` branches
+- Push to `main` branches
 - Pull request creation/update
 - Manual workflow dispatch
 
@@ -171,8 +175,8 @@ npm run test:chrome
    └─ If fail → Stop pipeline
 
 2. Parallel Execution:
-   ├─ E2E Tests (Chromium, Firefox, WebKit)
-   └─ Regression Tests (Chromium)
+   ├─ E2E Tests (Chromium, Firefox)
+   └─ Regression Tests (Chromium, Firefox)
 
 3. Report Generation
    └─ Aggregate results
@@ -205,11 +209,11 @@ npm run test:chrome
 - No data maintenance
 - Real production environment
 - Faster test execution
+- Multiple workers, parallel executions, retries
 
 **Limitations:**
 - Cannot test user-specific features
 - No control over product data
-- Rate limiting possible (mitigated by reasonable test frequency)
 
 ---
 
@@ -220,7 +224,6 @@ npm run test:chrome
 **Allure Report:**
 - Visual test results
 - Screenshots on failure
-- Video recordings
 - Execution timeline
 - Location: `allure-results/`
 
@@ -269,17 +272,17 @@ npm run test:chrome
 ### Scaling for Growth
 
 **Current Capacity:**
-- 20-30 tests
-- 15-minute execution
-- 3 browsers
+- Unlimted tests
+- 26 seconds execution in Local, ~2 minutes 30 seconds on CI
+- 2 browsers
 - GitHub Actions free tier
 
 **Future Scaling (If Application Grows):**
 
 **Phase 1: 50-100 Tests**
-- Add test parallelization
 - Implement test sharding
-- Consider paid CI minutes
+- Adding self healing selectors
+- Add more robust page object model 
 
 **Phase 2: 100-300 Tests**
 - Set up dedicated test environment
@@ -305,26 +308,6 @@ npm run test:chrome
 7. Monitor CI results
 8. Update documentation
 
-**Example:**
-```javascript
-// tests/e2e/checkout.spec.js
-import { test, expect } from '@playwright/test';
-
-test('should complete checkout flow', async ({ page }) => {
-  // Navigate to product
-  await page.goto('/');
-  await page.click('a[href*="/product/"]');
-  
-  // Add to cart
-  await page.click('button:has-text("Add to Cart")');
-  
-  // Go to checkout
-  await page.click('button:has-text("Checkout")');
-  
-  // Verify checkout page
-  await expect(page).toHaveURL(/checkout/);
-});
-```
 
 ---
 
@@ -339,28 +322,6 @@ test('should complete checkout flow', async ({ page }) => {
 
 ---
 
-## 12. Success Criteria & KPIs
-
-### Weekly KPIs
-- ✅ All smoke tests pass
-- ✅ < 5% test flakiness rate
-- ✅ CI execution time < 15 minutes
-- ✅ Zero critical bugs in production
-
-### Monthly KPIs
-- ✅ Test coverage > 80%
-- ✅ Bug detection rate tracking
-- ✅ Test execution trends
-- ✅ Documentation up-to-date
-
-### Quarterly Review
-- Assess test effectiveness
-- Update testing strategy
-- Plan capacity increases
-- Review tool choices
-
----
-
 ## 13. Continuous Improvement
 
 ### Feedback Loops
@@ -370,11 +331,11 @@ test('should complete checkout flow', async ({ page }) => {
 4. **User Reports:** Compare with real user issues
 
 ### Improvement Areas
-- Add visual regression testing
 - Implement API testing layer
 - Add performance testing
 - Enhance mobile coverage
 - Add accessibility testing
+- Add responsive testing 
 
 ---
 
@@ -409,15 +370,11 @@ npx playwright install --with-deps
 npm test                    # All tests
 npm run test:e2e           # E2E tests only
 npm run test:smoke         # Smoke tests only
-npm run test:ui            # Interactive mode
 npm run test:headed        # See browser
 npm run test:debug         # Debug mode
-
 # Specific Browser
 npm run test:chrome
 npm run test:firefox
-npm run test:safari
-
 # Reports
 npm run test:report        # Open HTML report
 ```

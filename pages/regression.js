@@ -74,10 +74,7 @@ class Regression {
     return prices;
   }
 
-  /**
-   * Take screenshot when sorting fails
-   * @param {string} screenshotName - Name for the screenshot
-   */
+
   async takeScreenshotOnFailure(screenshotName) {
     const timestamp = new Date().toISOString().replace(/:/g, '-');
     const path = `test-results/screenshots/${screenshotName}-${timestamp}.png`;
@@ -116,17 +113,13 @@ class Regression {
       console.error('Expected (sorted):', sortedPrices);
       console.error('Actual (from page):', prices);
       
-      // Take screenshot on failure
       await this.takeScreenshotOnFailure('price-sorting-high-to-low-failed');
       
-      // Re-throw the error so the test fails
       throw error;
     }
   }
 
-  /**
-   * Verify prices are sorted from low to high
-   */
+ 
   async verifyPricesSortedLowToHigh() {
     console.log('Verifying prices are sorted from low to high');
     console.log('Clicking on "All" category to view all products');
