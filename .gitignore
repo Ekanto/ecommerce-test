@@ -1,9 +1,19 @@
-
-# Playwright
+# Dependencies
 node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
-allure-results
+package-lock.json
+
+playwright-report/
+test-results/
+allure-results/
+screenshots/
+videos/
+traces/
+.playwright/
+
+
+.vscode/
+.idea/
+.DS_Store
+
+
+*.log
