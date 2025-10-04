@@ -20,7 +20,7 @@ class ProductPage {
     this.variantBlack = page.locator('button[title="Color Black"]');
     this.variantSize = page.locator('button[title="Size XS"]');
     this.productNameOnCart = page.locator('span:has-text("Acme Circles T-Shirt")');
-    this.proceedToCheckoutBtn = page.locator('button:has-text("Proceed to Checkout")');
+    this.proceedToCheckoutBtn = page.locator('button[type="submit"] >> text=Proceed to Checkout');
     this.closeToast = page.locator('button[aria-label="Close toast"]');
   }
 
@@ -49,7 +49,7 @@ class ProductPage {
     );
   }
 
-   async selectVariantAndAddToCart() {
+ async selectVariantAndAddToCart() {
     console.log("Selecting product variants");
     console.log(
       "Selecting the product first",
@@ -77,14 +77,14 @@ class ProductPage {
     );
     console.log("Proceeding to checkout");
     
-    // Conditional toast handling
-    try {
-      console.log("Checking for toast message");
-      await this.closeToast.waitFor({ timeout: 3000 });
+    // Conditional toast handling with if-else
+    const isToastVisible = await this.closeToast.isVisible({ timeout: 3000 });
+    
+    if (isToastVisible) {
       console.log("Toast message found, closing it");
       await this.closeToast.click();
       console.log("Toast message closed");
-    } catch (error) {
+    } else {
       console.log("No toast message found, proceeding directly to checkout");
     }
     
