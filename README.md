@@ -1,6 +1,6 @@
 # Next.js Commerce - Automated Testing Suite
 
-![Tests](https://github.com/YOUR-USERNAME/nextjs-commerce-automation/workflows/Automated%20Test%20Suite/badge.svg)
+
 ![Playwright](https://img.shields.io/badge/Playwright-1.40-green)
 ![Node](https://img.shields.io/badge/Node-18+-blue)
 
@@ -21,11 +21,10 @@ This project provides automated testing coverage for the [Next.js Commerce](http
 - ✅ **E2E Testing** - Complete user journey validation
 - ✅ **Regression Testing** - Ensure features don't break
 - ✅ **Smoke Testing** - Quick critical path validation
-- ✅ **Cross-Browser Testing** - Chrome, Firefox, Safari
-- ✅ **Mobile Testing** - iOS and Android emulation
+- ✅ **Cross-Browser Testing** - Chrome, Firefox
+- ✅ **parallel testing ** - Chrome, Firefox with multiple workers
 - ✅ **CI/CD Integration** - Automated execution on GitHub Actions
-- ✅ **Rich Reporting** - HTML, JSON, and JUnit reports
-- ✅ **Video Recording** - Capture failed test scenarios
+- ✅ **Rich Reporting** - Allure, HTML, JSON reports
 - ✅ **Screenshots** - Visual evidence of failures
 
 ---
@@ -42,14 +41,14 @@ This project provides automated testing coverage for the [Next.js Commerce](http
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR-USERNAME/nextjs-commerce-automation.git
-cd nextjs-commerce-automation
+git clone https://github.com/Ekanto/ecommerce-test
+cd ecommerce-test
 
 # 2. Install dependencies
 npm install
 
 # 3. Install Playwright browsers
-npx playwright install --with-deps
+npx playwright install
 
 # 4. Run tests
 npm test
@@ -75,10 +74,8 @@ npm run test:smoke         # Smoke tests
 # Run tests on specific browsers
 npm run test:chrome        # Chromium only
 npm run test:firefox       # Firefox only
-npm run test:safari        # WebKit/Safari only
 
 # Interactive & Debug modes
-npm run test:ui            # Open Playwright UI
 npm run test:headed        # Run with visible browser
 npm run test:debug         # Debug mode with inspector
 
@@ -91,7 +88,7 @@ npm run test:report        # Open HTML report
 ```bash
 $ npm test
 
-Running 15 tests using 3 workers
+Running 28 tests using 4 workers
 
   ✓ homepage.spec.js:5:3 › should load homepage successfully (2.1s)
   ✓ homepage.spec.js:12:3 › should display navigation menu (1.8s)
@@ -107,30 +104,31 @@ To view HTML report, run: npx playwright show-report
 ## 🗂️ Project Structure
 
 ```
-nextjs-commerce-automation/
-│
-├── tests/
-│   ├── e2e/                      # End-to-end tests
-│   │   ├── homepage.spec.js      # Homepage functionality
-│   │   └── product-flow.spec.js  # Product browsing flows
-│   │
-│   ├── regression/               # Regression tests
-│   │   └── cart.spec.js          # Cart functionality
-│   │
-│   └── smoke/                    # Smoke tests
-│       └── basic.spec.js         # Critical path validation
-│
-├── .github/
-│   └── workflows/
-│       └── test.yml              # CI/CD pipeline configuration
-│
-├── playwright-report/            # Generated HTML reports
-├── test-results/                 # Test artifacts (screenshots, videos)
-│
-├── playwright.config.js          # Playwright configuration
-├── package.json                  # Dependencies and scripts
-├── README.md                     # This file
-└── TESTING_STRATEGY.md          # Detailed testing strategy
+.github/
+    └── workflows/
+        └── test.yml
+pages/
+    ├── landingPage.js
+    ├── productPage.js
+    ├── regression.js
+    └── smoke.js
+screenshots/
+    └── checkout.png
+tests/
+    ├── e2e/
+        ├── landing.spec.js
+        └── product.spec.js
+    ├── regression/
+        └── regression.spec.js
+    └── smoke/
+        └── smoke.spec.js
+.gitignore
+BUG_REPORT.md
+package-lock.json
+package.json
+playwright.config.js
+README.md
+TESTING_STRATEGY.md
 ```
 
 ---
@@ -139,31 +137,28 @@ nextjs-commerce-automation/
 
 ### E2E Tests (End-to-End)
 - ✅ Homepage loading and rendering
-- ✅ Navigation menu functionality
-- ✅ Product search and filtering
+- ✅ Product search
 - ✅ Product detail page viewing
-- ✅ Category navigation
-- ✅ Responsive design validation
-- ✅ Complete user journeys
-
+- ✅ Cart button functionality
+- ✅ Footer links redirection and functionality
+- ✅ Add to cart
+- ✅ Selecting variant and color. 
+- ✅ Product photo validation
 ### Regression Tests
-- ✅ Cart icon visibility
-- ✅ Cart state management
-- ✅ Add to cart functionality
-- ✅ Cart persistence across navigation
-- ✅ Error handling
+- ✅ Switching between categories
+- ✅ Product sorting Price:High to low
+- ✅ Product sorting Price:Low to High
 
 ### Smoke Tests
 - ✅ Application accessibility
-- ✅ Critical page loads
+- ✅ No critical page load error
 - ✅ Navigation functionality
 - ✅ Product listings display
-- ✅ Search availability
-- ✅ Performance baseline
+- ✅ Product redirections 
 
-**Total Test Cases:** 25+  
-**Browsers Covered:** 3 (Chrome, Firefox, Safari)  
-**Mobile Devices:** 2 (iPhone, Pixel)
+
+**Total Test Cases:** 14
+**Browsers Covered:** 2 (Chrome, Firefox)  
 
 ---
 
@@ -172,21 +167,71 @@ nextjs-commerce-automation/
 ### Automated Execution
 
 Tests run automatically on:
-- ✅ Push to `main` or `develop` branches
-- ✅ Pull request creation/updates
-- ✅ Manual workflow dispatch
+- ✅ Push to `main` branches
 
 ### Pipeline Stages
 
 ```mermaid
-graph LR
-    A[Code Push] --> B[Smoke Tests]
-    B --> C{Pass?}
-    C -->|Yes| D[E2E Tests]
-    C -->|No| E[Fail Fast]
-    D --> F[Regression Tests]
-    F --> G[Generate Reports]
-    G --> H[Upload Artifacts]
+flowchart TD
+    subgraph "CI/CD Pipeline"
+        CI["CI/CD (GitHub Actions)"]:::ci
+    end
+    CI -->|triggers| Runner["Playwright Test Runner"]:::runner
+
+    subgraph "Test Code"
+        Config["playwright.config.js"]:::config
+        Package["package.json"]:::config
+        subgraph "Page Models"
+            Landing["landingPage.js"]:::config
+            Product["productPage.js"]:::config
+        end
+        subgraph "Test Suites"
+            Smoke["Smoke Tests"]:::suite
+            E2E["E2E Tests"]:::suite
+            Regression["Regression Tests"]:::suite
+        end
+    end
+
+    Runner --> Config
+    Runner --> Package
+    Runner --> Smoke
+    Runner --> E2E
+    Runner --> Regression
+    Config -->|defines parameters| Runner
+
+    subgraph "External Services"
+        DemoApp["Next.js Commerce Demo"]:::external
+        Browsers["Browsers\nChromium, Firefox, WebKit"]:::external
+    end
+
+    Runner -->|"runs against"| DemoApp
+    Runner -->|"runs on"| Browsers
+
+    Artifact["Artifacts\nScreenshots, Videos, Reports"]:::artifact
+    Runner -->|"generates"| Artifact
+    Artifact -->|"published to"| CI
+
+    subgraph "GitHub Actions UI"
+        UI["Actions Tab & PR Comments"]:::external
+    end
+
+    CI --> UI
+    Artifact --> UI
+
+    click CI "https://github.com/ekanto/ecommerce-test/blob/main/.github/workflows/test.yml"
+    click Config "https://github.com/ekanto/ecommerce-test/blob/main/playwright.config.js"
+    click E2E "https://github.com/ekanto/ecommerce-test/tree/main/tests/e2e/"
+    click Landing "https://github.com/ekanto/ecommerce-test/blob/main/pages/landingPage.js"
+    click Product "https://github.com/ekanto/ecommerce-test/blob/main/pages/productPage.js"
+    click Artifact "https://github.com/ekanto/ecommerce-test/tree/main/screenshots/"
+    click Package "https://github.com/ekanto/ecommerce-test/blob/main/package.json"
+
+    classDef config fill:#cce5ff,stroke:#004085,color:#004085
+    classDef suite fill:#d4edda,stroke:#155724,color:#155724
+    classDef artifact fill:#fff3cd,stroke:#856404,color:#856404
+    classDef ci fill:#f5c6cb,stroke:#721c24,color:#721c24
+    classDef external fill:#e2e3e5,stroke:#6c757d,color:#6c757d
+    classDef runner fill:#d1ecf1,stroke:#0c5460,color:#0c5460
 ```
 
 ### Viewing Results
@@ -194,7 +239,7 @@ graph LR
 1. Go to **Actions** tab in GitHub
 2. Select the workflow run
 3. View test results and download artifacts
-4. Check test summary in PR comments
+
 
 ---
 
@@ -215,10 +260,8 @@ npm run test:report
 
 ### CI Artifacts
 After each CI run, download:
+- Allure 
 - HTML reports
-- Screenshots (failures only)
-- Videos (failures only)
-- JUnit XML (for integration)
 
 ---
 
@@ -243,14 +286,6 @@ Key settings in `playwright.config.js`:
 }
 ```
 
-### Environment Variables
-
-```bash
-# Optional: Override base URL
-export BASE_URL=https://your-custom-url.com
-npm test
-```
-
 ---
 
 ## 🐛 Troubleshooting
@@ -259,7 +294,7 @@ npm test
 
 **Issue: Playwright browsers not installed**
 ```bash
-npx playwright install --with-deps
+npx playwright install
 ```
 
 **Issue: Tests fail with timeout**
@@ -322,28 +357,7 @@ test('should complete checkout process', async ({ page }) => {
 
 ---
 
-## 🤝 Contributing
 
-### Setup for Development
-
-```bash
-# Fork and clone
-git clone https://github.com/YOUR-USERNAME/nextjs-commerce-automation.git
-cd nextjs-commerce-automation
-
-# Create feature branch
-git checkout -b feature/new-tests
-
-# Make changes and test
-npm test
-
-# Commit and push
-git add .
-git commit -m "Add: new test for feature X"
-git push origin feature/new-tests
-
-# Create pull request
-```
 
 ### Contribution Guidelines
 
@@ -359,10 +373,11 @@ git push origin feature/new-tests
 
 ### Performance Benchmarks
 
-- **Smoke Tests:** ~2-3 minutes
-- **E2E Tests:** ~8-10 minutes
-- **Regression Tests:** ~3-5 minutes
-- **Full Suite:** ~15 minutes
+- **Smoke Tests:** ~1 minute
+- **E2E Tests:** ~2 minutes
+- **Regression Tests:** ~2 minutes
+- **Report Generation:** ~1 minute
+- **Full Suite:** ~3 minutes
 
 ### Success Criteria
 
@@ -389,36 +404,6 @@ For issues or questions:
 1. Check [Troubleshooting](#-troubleshooting) section
 2. Review [Testing Strategy](TESTING_STRATEGY.md)
 3. Open an issue on GitHub
-4. Contact the QA team
+4. Contact me at **umarekanto@gmail.com**
 
----
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-## 🙏 Acknowledgments
-
-- [Next.js Commerce](https://github.com/vercel/commerce) - Demo application
-- [Playwright](https://playwright.dev) - Testing framework
-- [Vercel](https://vercel.com) - Hosting platform
-
----
-
-## 📅 Changelog
-
-### Version 1.0.0 (October 2025)
-- Initial release
-- E2E test suite
-- Regression tests
-- Smoke tests
-- CI/CD integration
-- Cross-browser support
-- Mobile testing
-- Comprehensive documentation
-
----
-
-**Built with ❤️ for quality assurance**

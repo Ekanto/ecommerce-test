@@ -90,6 +90,7 @@ tests/
     └── smoke/
         └── smoke.spec.js
 .gitignore
+BUG_REPORT.md
 package-lock.json
 package.json
 playwright.config.js
