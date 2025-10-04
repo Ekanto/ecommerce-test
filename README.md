@@ -22,7 +22,7 @@ This project provides automated testing coverage for the [Next.js Commerce](http
 - ✅ **Regression Testing** - Ensure features don't break
 - ✅ **Smoke Testing** - Quick critical path validation
 - ✅ **Cross-Browser Testing** - Chrome, Firefox
-- ✅ **parallel testing ** - Chrome, Firefox with multiple workers
+- ✅ **parallel testing** - Chrome, Firefox with multiple workers
 - ✅ **CI/CD Integration** - Automated execution on GitHub Actions
 - ✅ **Rich Reporting** - Allure, HTML, JSON reports
 - ✅ **Screenshots** - Visual evidence of failures
