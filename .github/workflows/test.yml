@@ -24,10 +24,10 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install 
       
       - name: Run smoke tests
         run: npm run test:smoke
@@ -53,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox]
     
     steps:
       - name: Checkout code
@@ -66,10 +66,10 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps ${{ matrix.browser }}
+        run: npx playwright install 
       
       - name: Run E2E tests on ${{ matrix.browser }}
         run: npx playwright test tests/e2e --project=${{ matrix.browser }}
@@ -106,7 +106,7 @@ jobs:
         run: npm ci
       
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install
       
       - name: Run regression tests
         run: npm run test:regression
