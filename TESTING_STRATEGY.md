@@ -71,15 +71,24 @@ This document outlines the comprehensive testing strategy for the Next.js Commer
 
 **Directory Structure:**
 ```
+.github/
+    └── workflows/
+        └── test.yml
+pages/
+    ├── landingPage.js
+    └── productPage.js
+screenshots/
+    └── checkout.png
 tests/
-├── e2e/              # End-to-end user journeys
-│   ├── homepage.spec.js
-│   ├── product-flow.spec.js
-│   └── navigation.spec.js
-├── regression/       # Feature regression tests
-│   └── cart.spec.js
-└── smoke/           # Quick critical path tests
-    └── basic.spec.js
+    └── e2e/
+        ├── landing.spec.js
+        └── product.spec.js
+.gitignore
+package-lock.json
+package.json
+playwright.config.js
+README.md
+TESTING_STRATEGY.md
 ```
 
 ---
