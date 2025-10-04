@@ -82,23 +82,6 @@ npm run test:debug         # Debug mode with inspector
 # Generate and view reports
 npm run test:report        # Open HTML report
 ```
-
-### Example Output
-
-```bash
-$ npm test
-
-Running 28 tests using 4 workers
-
-  ✓ homepage.spec.js:5:3 › should load homepage successfully (2.1s)
-  ✓ homepage.spec.js:12:3 › should display navigation menu (1.8s)
-  ✓ product-flow.spec.js:7:3 › should complete full product browsing journey (4.2s)
-  
-  15 passed (23.5s)
-
-To view HTML report, run: npx playwright show-report
-```
-
 ---
 
 ## 🗂️ Project Structure
@@ -157,7 +140,7 @@ TESTING_STRATEGY.md
 - ✅ Product redirections 
 
 
-**Total Test Cases:** 14
+**Total Test Cases:** 14, 
 **Browsers Covered:** 2 (Chrome, Firefox)  
 
 ---
@@ -262,29 +245,6 @@ npm run test:report
 After each CI run, download:
 - Allure 
 - HTML reports
-
----
-
-## 🛠️ Configuration
-
-### Playwright Configuration
-
-Key settings in `playwright.config.js`:
-
-```javascript
-{
-  testDir: './tests',
-  timeout: 30000,
-  retries: 2,  // In CI only
-  workers: 3,  // Parallel execution
-  
-  use: {
-    baseURL: 'https://demo.vercel.store',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-  }
-}
-```
 
 ---
 
