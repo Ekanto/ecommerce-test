@@ -49,7 +49,7 @@ If the sorting is set to Price:High to Low, it should maintain the consistancy o
 - **Application URL:** https://demo.vercel.store
 - **Browser:** Chromium, Firefox
 - **Test Run Date:** 2025-10-04
-- **CI/CD Run:** https://github.com/Ekanto/ecommerce-test/actions/runs/18242697322/job/51946694105
+- **CI/CD Run:** https://github.com/Ekanto/ecommerce-test/actions/runs/18244081687
 
 ### Impact
 - **User Impact:** User won't be allow to sort product by price from High to Low
@@ -139,7 +139,7 @@ Sorting was inconsistant
 - **Application URL:** https://demo.vercel.store
 - **Browser:** Chromium, Firefox
 - **Test Run Date:** 2025-10-04
-- **CI/CD Run:** https://github.com/Ekanto/ecommerce-test/actions/runs/18242697322/job/51946694105
+- **CI/CD Run:** https://github.com/Ekanto/ecommerce-test/actions/runs/18244081687
 
 ### Impact
 - **User Impact:** User won't be allow to sort product by price from High to Low
